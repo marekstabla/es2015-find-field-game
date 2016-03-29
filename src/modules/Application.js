@@ -30,7 +30,7 @@ let _setEvents = function _setEvents() {
 
     _game.on('timerChange', (timer) => {
         _ui.timerChange(timer);
-    })
+    });
 };
 
 export default class Application {

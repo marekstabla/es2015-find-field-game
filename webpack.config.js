@@ -15,10 +15,7 @@ module.exports = {
             {
                 test: path.join(__dirname, 'src'),
                 loader: 'babel-loader',
-                exclude: '/node_modules/',
-                query: {
-                    presets: ['es2015']
-                }
+                exclude: '/node_modules/'
             },
             {
                 test: /\.html$/,

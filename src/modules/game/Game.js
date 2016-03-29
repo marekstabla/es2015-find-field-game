@@ -17,6 +17,8 @@ export default class Game extends EventEmitter {
                 _gameInstance.state = GameStates.READY;
                 _gameInstance.movesCount = _config.MAX_MOVES;
                 _gameInstance.timer = _config.GAME_TIME;
+
+                _gameInstance.emit('ready');
             });
         }
 
@@ -60,7 +62,7 @@ export default class Game extends EventEmitter {
         this.state = GameStates.STARTED;
         this.movesCount = _config.MAX_MOVES;
         this.timer = _config.GAME_TIME;
-            //Set game timeout from config
+        //Set game timeout from config
         this._gameTimeout = setInterval(() => {
             _gameInstance.timer--;
 
@@ -77,39 +79,47 @@ export default class Game extends EventEmitter {
             clearInterval(this._gameTimeout);
         }
 
-        this.state = reason;
+        if (this.state === GameStates.STARTED) {
+            this.state = reason;
+        }
     };
 
     discover(column, row) {
-        if (this.state != GameStates.STARTED)
-            return;
-
         let field = this._board[row][column];
 
-        if (field.isDiscovered)
-            return;
+        if (this.state != GameStates.STARTED)
+            return field;
 
-        this.movesCount--;
+        if (!field.isDiscovered) {
 
-        let isWinning = field.discover();
+            this.movesCount--;
 
-        this.emit('discover', {
-            position: field.position,
-            isWinningField: field.isWinningField,
-            isDiscovered: field.isDiscovered
-        });
+            let isWinning = field.discover();
 
-        if (isWinning) {
-            this.finishGame(GameStates.WIN);
-        } else if (this.movesCount <= 0) {
-            this.finishGame(GameStates.NO_MOVES);
+            this.emit('discover', {
+                position: field.position,
+                isWinningField: field.isWinningField,
+                isDiscovered: field.isDiscovered
+            });
+
+            if (isWinning) {
+                this.finishGame(GameStates.WIN);
+            } else if (this.movesCount <= 0) {
+                this.finishGame(GameStates.NO_MOVES);
+            }
         }
+
+        return field;
     }
 
     restart() {
-        BoardLoader.generateBoard(_config.COLUMNS, _config.ROWS).then((board) => {
-            _gameInstance._board = board;
-            _gameInstance.start();
+        return new Promise((resolve) => {
+            BoardLoader.generateBoard(_config.COLUMNS, _config.ROWS).then((board) => {
+                _gameInstance._board = board;
+                _gameInstance.start();
+
+                resolve();
+            })
         });
     }
 }
