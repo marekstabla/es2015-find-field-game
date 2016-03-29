@@ -14,13 +14,11 @@ let _generateBoard = function generateBoard(columns, rows) {
                 board[r].push(new Field(c, r));
             }
         }
-        console.log("resolved?");
         resolve(board);
     });
 };
 
 let _pickRandomWinningField = function pickRandomWinningField(board, columns, rows) {
-    console.log("picking");
     //Pick random integer between 0 and columns/rows
     let randomCol = Math.floor(Math.random() * columns);
     let randomRow = Math.floor(Math.random() * rows);
@@ -34,7 +32,6 @@ export default class BoardLoader {
         return new Promise((resolve) => {
             _generateBoard(columns, rows).then((board) => {
                 _pickRandomWinningField(board, columns, rows);
-                console.log(board);
                 resolve(board);
             })
         });

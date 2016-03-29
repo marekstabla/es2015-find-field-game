@@ -1,5 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
-@import 'mixins';
+@import './mixins';
 
 html, body {
   height: 100%;
@@ -19,6 +19,11 @@ body {
     margin: 10px;
     cursor: pointer;
   }
+}
+
+#loader {
+  margin: 0 auto;
+  text-align: center;
 }
 
 #game {

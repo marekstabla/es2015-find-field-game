@@ -1,14 +1,14 @@
 export default class GameConfig {
     static get GAME_TIME() {
-        return 10;
+        return 40;
     }
 
     static get COLUMNS() {
-        return 500;
+        return 5;
     }
 
     static get ROWS() {
-        return 500;
+        return 5;
     }
 
     static get MAX_MOVES() {

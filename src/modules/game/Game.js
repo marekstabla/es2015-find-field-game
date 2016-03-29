@@ -16,6 +16,7 @@ export default class Game extends EventEmitter {
                 _gameInstance._board = board;
                 _gameInstance.state = GameStates.READY;
                 _gameInstance.movesCount = _config.MAX_MOVES;
+                _gameInstance.timer = _config.GAME_TIME;
             });
         }
 
@@ -38,7 +39,6 @@ export default class Game extends EventEmitter {
     }
 
     set movesCount(value) {
-        console.log(value);
         this._movesCount = value;
         this.emit('movesCountChange', value);
     }
@@ -47,20 +47,34 @@ export default class Game extends EventEmitter {
         return this._movesCount;
     }
 
+    set timer(value) {
+        this._timer = value;
+        this.emit('timerChange', value);
+    }
+
+    get timer() {
+        return this._timer;
+    }
+
     start() {
         this.state = GameStates.STARTED;
         this.movesCount = _config.MAX_MOVES;
-        console.log("TIMEOUT START");
-        //Set game timeout from config
-        this._gameTimeout = setTimeout(() => {
-            this.finishGame(GameStates.TIMEOUT)
-        }, _config.GAME_TIME * 1000);
+        this.timer = _config.GAME_TIME;
+            //Set game timeout from config
+        this._gameTimeout = setInterval(() => {
+            _gameInstance.timer--;
+
+            if (_gameInstance.timer <= 0) {
+                _gameInstance.finishGame(GameStates.TIMEOUT);
+            }
+
+        }, 1000);
     };
 
     finishGame(reason) {
         //Clear timeout if game finished
         if (this._gameTimeout) {
-            clearTimeout(this._gameTimeout);
+            clearInterval(this._gameTimeout);
         }
 
         this.state = reason;

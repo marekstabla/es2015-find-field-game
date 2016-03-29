@@ -1,11 +1,14 @@
 var path = require('path');
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var extractCSS = new ExtractTextPlugin('stylesheets/[name].css');
 
 module.exports = {
     entry: './src/main.js',
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js'
+        filename: '[name].bundle.js'
     },
     module: {
         loaders: [
@@ -23,11 +26,15 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loaders: ['style', 'css', 'sass']
+                loader: extractCSS.extract(['css','sass'])
             }
         ]
     },
-    plugins: [new HtmlWebpackPlugin({
-        template: 'src/index.html'
-    })]
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'src/index.html'
+        }),
+        extractCSS,
+        new webpack.optimize.UglifyJsPlugin({minimize: true})
+    ]
 };

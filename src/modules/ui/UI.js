@@ -13,6 +13,7 @@ let _restartButton = null;
 let _state = null;
 let _fieldBoard = null;
 let _movesCount = null;
+let _timer = null;
 
 let _initialize = function _initialize() {
     _game = _document.getElementById('game');
@@ -29,6 +30,7 @@ let _initialize = function _initialize() {
 
     _state = _document.getElementById('state');
     _movesCount = document.getElementById('movesCount');
+    _timer = document.getElementById('timer');
 
     _initializeEvents();
 };
@@ -116,8 +118,13 @@ export default class UI extends EventEmitter {
             _config = config;
             _uiInstance = this;
 
+            this.on('ready', () => {
+                _uiInstance.ready = true;
+            });
+
             _initialize();
             _initializeBoard(_config.COLUMNS, _config.ROWS, 'ready');
+
         }
 
         return _uiInstance;
@@ -127,17 +134,48 @@ export default class UI extends EventEmitter {
         return this._document;
     }
 
-    stateChange(state) {
-        if (_state)
-            _state.innerHTML = state;
+    set ready(value) {
+        this._ready = value;
+    }
 
-        if (state === GameStates.STARTED) {
-            _hideElement(_restartButton);
-        } else if (state === GameStates.WIN) {
-            _showElement(_restartButton);
-        } else if (state === GameStates.TIMEOUT || state === GameStates.NO_MOVES) {
-            _showElement(_restartButton);
-            _hideElement(_board);
+    get ready() {
+        return this._ready;
+    }
+
+    stateChange(state) {
+        switch (state) {
+            case GameStates.READY:
+                if (_state)
+                    _state.innerHTML = "Game is ready";
+                break;
+
+            case GameStates.STARTED:
+                if (_state)
+                    _state.innerHTML = 'Game started';
+                _hideElement(_restartButton);
+                break;
+
+            case GameStates.WIN:
+                if (_state)
+                    _state.innerHTML = 'You won!';
+                _showElement(_restartButton);
+                break;
+
+
+            case GameStates.TIMEOUT:
+                if (_state)
+                    _state.innerHTML = 'You lost (timeout)';
+                _showElement(_restartButton);
+                _hideElement(_board);
+                break;
+
+            case GameStates.NO_MOVES:
+                if (_state)
+                    _state.innerHTML = 'You lost (out of moves)';
+                _showElement(_restartButton);
+                _hideElement(_board);
+                break;
+
         }
     }
 
@@ -154,5 +192,10 @@ export default class UI extends EventEmitter {
     movesCountChange(count) {
         if (_movesCount)
             _movesCount.innerHTML = count;
+    }
+
+    timerChange(timer) {
+        if (_timer)
+            _timer.innerHTML = timer;
     }
 }
