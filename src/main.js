@@ -1,22 +1,8 @@
-import Game from './modules/game/Game';
+require('./scss/app.scss');
+
 import Config from './config/GameConfig';
 import UI from './modules/ui/UI';
+import Application from './modules/Application';
+let ui = new UI(window.document, Config);
 
-var game = new Game(Config);
-var ui = new UI(window.document);
-
-ui.on('ready', () => {
-    game.start(Config)
-});
-
-game.on('stateChange', (args) => {
-    console.log(args);
-});
-
-game.on('discover', (field) => {
-   console.log('Discovering field', field);
-});
-
-setTimeout(() => {
-    game.discover(0, 0)
-}, 1000);
+let app = new Application(ui, Config);

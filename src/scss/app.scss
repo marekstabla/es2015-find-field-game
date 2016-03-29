@@ -1,0 +1,73 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@import 'mixins';
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menu-container {
+  height: 50px;
+
+  button {
+    width: 100px;
+    height: 30px;
+    margin: 10px;
+    cursor: pointer;
+  }
+}
+
+#game {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#board {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .row {
+    width: auto;
+
+    .field {
+      width: 100px;
+      height: 100px;
+      background-color: #6699cc;
+      border-radius: 50%;
+      margin: 20px;
+      cursor: pointer;
+      @include transition(background-color .2s, transform .2s);
+
+      &:hover {
+        -webkit-transform: translateY(-8px);
+        transform: translateY(-8px);
+      }
+
+
+      &.discovered {
+        background-color: #fff;
+      }
+
+      &.winning {
+        background-color: gold;
+      }
+    }
+  }
+}
+

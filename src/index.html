@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="../dist/bundle.js" type="text/javascript"></script>
 </head>
 <body>
-
+<div id="game" class="hidden">
+    <div>
+        <div class="menu-container">
+            <div id="menu">
+                <button id="startButton">
+                    START GAME
+                </button>
+                <button id="restartButton" class="hidden">
+                    RESTART GAME
+                </button>
+            </div>
+        </div>
+        <div>
+            <strong>Status: </strong> <span id="state"></span><br>
+            <strong>Moves left: </strong> <span id="movesCount"></span>
+        </div>
+    </div>
+    <div id="board">
+    </div>
+</div>
+<div id="loader">
+    <h1>Loading game...</h1>
+</div>
 </body>
 </html>

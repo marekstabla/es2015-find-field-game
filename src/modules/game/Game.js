@@ -1,34 +1,22 @@
-import Board from './Board';
+import BoardLoader from './BoardLoader';
 import EventEmitter from '../utils/EventEmitter';
-
-//Game States
-const READY = Symbol();
-const STARTED = Symbol();
-const WIN = Symbol();
-const TIMEOUT = Symbol();
-
-let GAME_STATES = {};
-GAME_STATES[READY] = 'READY';
-GAME_STATES[STARTED] = 'STARTED';
-GAME_STATES[WIN] = 'WIN';
-GAME_STATES[TIMEOUT] = 'TIMEOUT';
+import GameStates from './GameStates';
 
 let _gameInstance = null;
-let Config = null;
+let _config = null;
 
 export default class Game extends EventEmitter {
     constructor(config) {
         super();
         if (!_gameInstance) {
-            Config = config;
-
-            this._board = new Board(Config.COLUMNS, Config.ROWS).board;
+            _config = config;
             _gameInstance = this;
 
-            //Notify about "ready" state after object is initialized
-            setTimeout(() => {
-                _gameInstance.state = GAME_STATES[READY];
-            })
+            BoardLoader.generateBoard(_config.COLUMNS, _config.ROWS).then((board) => {
+                _gameInstance._board = board;
+                _gameInstance.state = GameStates.READY;
+                _gameInstance.movesCount = _config.MAX_MOVES;
+            });
         }
 
         return _gameInstance;
@@ -49,13 +37,24 @@ export default class Game extends EventEmitter {
         return this._state;
     }
 
-    start() {
-        this.state = GAME_STATES[STARTED];
+    set movesCount(value) {
+        console.log(value);
+        this._movesCount = value;
+        this.emit('movesCountChange', value);
+    }
 
+    get movesCount() {
+        return this._movesCount;
+    }
+
+    start() {
+        this.state = GameStates.STARTED;
+        this.movesCount = _config.MAX_MOVES;
+        console.log("TIMEOUT START");
         //Set game timeout from config
         this._gameTimeout = setTimeout(() => {
-            this.finishGame(GAME_STATES[TIMEOUT])
-        }, Config.GAME_TIME * 1000);
+            this.finishGame(GameStates.TIMEOUT)
+        }, _config.GAME_TIME * 1000);
     };
 
     finishGame(reason) {
@@ -68,7 +67,15 @@ export default class Game extends EventEmitter {
     };
 
     discover(column, row) {
-        let field = this._board[column][row];
+        if (this.state != GameStates.STARTED)
+            return;
+
+        let field = this._board[row][column];
+
+        if (field.isDiscovered)
+            return;
+
+        this.movesCount--;
 
         let isWinning = field.discover();
 
@@ -79,12 +86,16 @@ export default class Game extends EventEmitter {
         });
 
         if (isWinning) {
-            this.finishGame(GAME_STATES[WIN]);
+            this.finishGame(GameStates.WIN);
+        } else if (this.movesCount <= 0) {
+            this.finishGame(GameStates.NO_MOVES);
         }
     }
 
     restart() {
-        this._board = new Board(Config.COLUMNS, Config.ROWS).board;
-        this._state = GAME_STATES[READY];
+        BoardLoader.generateBoard(_config.COLUMNS, _config.ROWS).then((board) => {
+            _gameInstance._board = board;
+            _gameInstance.start();
+        });
     }
 }
