@@ -1,13 +1,12 @@
 {
-  "name": "es6-game",
+  "name": "es2015-find-field-game",
   "version": "1.0.0",
-  "description": "Simple ES6 game for training",
-  "main": "index.js",
+  "description": "Simple ES2015 game for training",
+  "main": "src/main.js",
   "scripts": {
     "test": "babel-node spec/run.js"
   },
   "author": "Marek Stabla",
-  "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.6.5",
     "babel-core": "^6.7.4",

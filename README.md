@@ -2,6 +2,9 @@
 
 Simple game written in ES2015 with webpack, babel & jasmine
 
+Demo:
+http://marekstabla.pl/es2015-find-field-game/
+
 Contributors:
 Marek Stabla
 
